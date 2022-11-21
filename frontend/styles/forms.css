@@ -1,0 +1,185 @@
+table-wrapper {
+  display: block;
+  max-width: 100%;
+  overflow: auto;
+  position: relative;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 750px;
+}
+
+table td {
+  padding: .75rem;
+}
+
+table td > img {
+  display: block;
+}
+
+table tr > td:first-child {
+  padding-inline-start: 0;
+}
+
+table tr > td:last-child {
+  padding-inline-end: 0;
+}
+
+@media (max-width: 820px) {
+  table-wrapper {
+    box-shadow: inset -40px 0px 40px -40px #00000033;
+  }
+  table tr > td:last-child {
+    padding-inline-end: 1rem;
+  }
+}
+
+form-field {
+  display: block;
+  margin-block-end: 1rem;
+}
+
+form-field label {
+  display: block;
+  font-size: var(--sl-input-label-font-size-medium);
+  margin-block-end: var(--sl-spacing-2x-small);
+}
+
+dialog {
+  position: fixed;
+  inset-block-start: 0px;
+  inset-block-end: 0px;
+
+  padding: 0;
+  width: 100%;
+  max-width: 700px;
+  width: 97%;
+  box-sizing: border-box;
+  border: 0.5px solid #ccc;
+  border-radius: 14px;
+  box-shadow: 0px 10px 15px -5px #00000030;
+}
+
+dialog::backdrop {
+  background: #333;
+  opacity: 0.4;
+}
+
+dialog[open] {
+  animation: show-dialog 0.25s ease-out normal;
+}
+dialog[open]::backdrop {
+  animation: show-dialog-backdrop 1s ease-out normal;
+}
+
+dialog > * {
+  padding: 1.75rem;
+  padding-block-end: 0;
+}
+
+dialog > *:last-child {
+  padding-block-end: 1.75rem;
+}
+
+dialog > header {
+  display: grid;
+  text-align: left;
+  grid-template-columns: auto max-content;
+  border-bottom: 1px solid #ccc;
+  padding-block-end: 1rem;
+}
+
+dialog > header button {
+  font: inherit;
+  font-weight: bold;
+  border: none;
+  background: none;
+  font-size: 80%;
+  margin-top: -5px;
+  color: var(--sl-color-danger-400);
+}
+
+dialog > article {
+  min-height: 4rem;
+}
+
+dialog h2 {
+  margin: 0;
+  font-size: 130%;
+}
+
+dialog form-button {
+  display: block;
+  text-align: center;
+}
+
+details:has(dialog) > summary {
+  list-style: none;
+  display: inline-block;
+}
+details:has(dialog) > summary::-webkit-details-marker {
+  display: none;
+}
+
+sl-button:not(:has(inner-content)):not(:defined) {
+  display: none;
+}
+
+sl-button:not(:defined) > inner-content, form-button .js-undefined {
+  display: inline-block;
+  background: forestgreen;
+  color: white;
+  padding: 10px;
+  cursor: pointer;
+}
+
+:where(form-button) {
+  display: block;
+  margin-top: 1.5rem;
+}
+
+form-button:has(sl-button:defined) + form-button:has(.js-undefined) {
+  display: none;
+}
+
+td > form > form-button {
+  margin-top: 0;
+}
+
+form-field > input {
+  width: 100%;
+  font-family: var(--sl-input-font-family);
+  font-weight: var(--sl-input-font-weight);
+  letter-spacing: var(--sl-input-letter-spacing);
+  color: var(--sl-input-color);
+  vertical-align: middle;
+  background-color: var(--sl-input-background-color);
+  border: solid var(--sl-input-border-width) var(--sl-input-border-color);
+  border-radius: var(--sl-input-border-radius-medium);
+  font-size: var(--sl-input-font-size-medium);
+  height: var(--sl-input-height-medium);
+  padding: 0 var(--sl-input-spacing-small);
+  box-sizing: border-box;
+}
+
+@keyframes show-dialog {
+  from {
+      opacity: 0;
+      transform: translateY(-10%) scale(0.95);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0%);
+  }
+}
+
+@keyframes show-dialog-backdrop {
+  from {
+    opacity: 0.1;
+  }
+  to {
+    opacity: 0.4;
+  }
+}

@@ -1,0 +1,4 @@
+/* Import the base Shoelace stylesheet: */
+@import "@shoelace-style/shoelace/dist/themes/light.css";
+@import "global.css";
+@import "forms.css";

@@ -1,0 +1,23 @@
+{
+  "name": "bt_movies_live_demo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "shoelace:copy-assets": "mkdir -p src/shoelace-assets && cp -r node_modules/@shoelace-style/shoelace/dist/assets src/shoelace-assets",
+    "esbuild": "yarn shoelace:copy-assets && node esbuild.config.js --minify",
+    "esbuild-dev": "yarn shoelace:copy-assets && node esbuild.config.js --watch"
+  },
+  "devDependencies": {
+    "esbuild": "^0.14.39",
+    "glob": "^8.0.1",
+    "postcss": "^8.4.12",
+    "postcss-flexbugs-fixes": "^5.0.2",
+    "postcss-import": "^14.1.0",
+    "postcss-load-config": "^4.0.1",
+    "postcss-preset-env": "^7.4.3"
+  },
+  "dependencies": {
+    "@hotwired/turbo": "^7.2.4",
+    "@shoelace-style/shoelace": "^2.0.0-beta.83"
+  }
+}

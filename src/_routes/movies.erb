@@ -1,0 +1,146 @@
+---<%
+# Index, Create
+r.is do
+  # route: GET /movies
+  r.get do
+    movies = Movie.order(:year)
+  
+    render_with data: {
+      layout: :page,
+      title: "Movies",
+      movies:
+    }
+  end
+
+  # route: POST /movies
+  r.post do
+    check_csrf! # form authenticity check
+
+    Movie.create(params[:movie].slice(*Forms::Movie.param_string_keys)).save_omdb_details
+
+    if request.turbo_stream?
+      next [
+        turbo_stream.redirect_to("/movies"),
+        turbo_stream.toast(render(
+          Shared::Alert.new(variant: :success, message: "New movie added.")
+        ))
+      ]
+    end
+
+    r.redirect
+  end
+end
+
+# Edit, Update, Delete
+r.is Integer do |id|
+  check_csrf! # form authenticity check
+
+  # route: GET /movies/:id
+  r.get do
+    movie = Movie.find(id)
+
+    render_with data: {
+      layout: :page,
+      title: "Movies",
+      movie:
+    }
+  end
+
+  # route: PATCH /movies/:id
+  r.patch do
+    movie = Movie.find(id)
+    movie.update params[:movie].slice(*Forms::Movie.param_string_keys)
+
+    if request.turbo_stream?
+      next [
+        turbo_stream.redirect_to("/movies"),
+        turbo_stream.toast(render(
+          Shared::Alert.new(variant: :success, message: "Movie details saved!")
+        ))
+      ]
+    end
+
+    r.redirect "/movies"
+  end
+
+  # route: DELETE /movies/:id
+  r.delete do
+    movie = Movie.find(id)
+    movie.destroy
+
+    if request.turbo_stream?
+      next [
+        turbo_stream.redirect_to("/movies"),
+        turbo_stream.toast(render(
+          Shared::Alert.new(variant: :danger, message: "The movie has been deleted.")
+        ))
+      ]
+    end
+
+    r.redirect "/movies"
+  end
+end
+%>---
+
+<% if data.movies&.count&.positive? %>
+  <table-wrapper>
+    <table>
+      <% data.movies.each do |movie| %>
+        <tr>
+          <td style="width: 15%"><img src="<%= movie.poster_img %>" style="width:150px" /></td>
+          <td><%= movie.display_title %> (<a target="_blank" href="https://www.imdb.com/find?q=<%= uri_escape(movie.title) %>&s=tt">Find on IMDB</a>)</td>
+          <td><%= movie.year %></td>
+          <td>Directed by <%= movie.director %></td>
+          <td style="width:5%">
+            <%= link_to "Edit", movie %>
+          </td>
+          <td style="width:10%">
+            <%= render Forms::Movie.new(movie, method: "delete", data: {
+                  turbo_confirm: "Are you sure you wish to delete this movie?"
+                }) do |f| %>
+              <%= render f.field(:submit, label: "Remove", variant: "danger") %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </table>
+  </table-wrapper>
+  <% # render MoviesTable.new(movies: data.movies) %>
+
+  <hr />
+<% end %>
+
+<% if data.movie %>
+  <h2>Edit Movie</h2>
+
+  <%= render Forms::Movie.new(data.movie) %>
+<% else %>
+  <details ontoggle="setTimeout(() => { if (this.open) { this.querySelector('dialog').showModal() } })">
+    <summary>
+      <sl-button variant="success" tabindex="-1">
+        <inner-content>
+          Add Movie
+        </inner-content>
+      </sl-button>
+    </summary>
+
+    <dialog open
+      onclick="if (arguments[0].eventPhase === Event.AT_TARGET) this.close()"
+      onclose="this.closest('details').open = false"
+    >
+      <header>
+        <h2>Add Movie</h2>
+        <form method="dialog">
+          <button>X</button>
+        </form>
+      </header>
+
+      <article>
+        <%= render Forms::Movie.new(Movie.new) %>
+      </article>
+    </dialog>
+  </details>
+  <script>
+    document.querySelectorAll("dialog[open]").forEach(dialog => dialog.open = false)
+  </script>
+<% end %>
